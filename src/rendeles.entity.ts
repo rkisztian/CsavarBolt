@@ -5,11 +5,11 @@ import { Csavar } from "./csavar.entity";
 @Entity()
 export class Rendeles {
     @PrimaryGeneratedColumn()
-    if: number;
+    id: number;
 
     @ManyToOne(() => Csavar, (csavar) => csavar.id)
     csavar_id: number;
 
-    @Column()
+    @Column('int')
     db: number;
 }

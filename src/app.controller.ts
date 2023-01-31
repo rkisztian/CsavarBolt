@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Render } from '@nestjs/comm
 import { DataSource } from 'typeorm';
 import { AppService } from './app.service';
 import { Csavar } from './csavar.entity';
+import { Rendeles } from './rendeles.entity';
 
 @Controller()
 export class AppController {
@@ -42,9 +43,25 @@ export class AppController {
   }
 
   @Delete('/api/csavar/:id')
-  deleteCsavar(@Param('id') id: number) {
+   async deleteCsavar(@Param('id') id: number) {
     const csavarRepo = this.dataSource.getRepository(Csavar);
-    csavarRepo.delete(id);
+    await csavarRepo.delete(id)
+  }
+
+  @Post('/api/csavar/:id/rendeles')
+  async csavarRendeles(@Param('id') id: number, @Body() rendeles : Rendeles) {
+    const rendelRepo = this.dataSource.getRepository(Rendeles)
+    const csavarRepo = this.dataSource.getRepository(Csavar)
+    let csavarok = (await csavarRepo.findOneBy({id : id})).keszlet
+    if(csavarok - rendeles.db < 0){
+      return{ error: 'Nincs csavar'}
+    } else {
+      csavarRepo.update({id: id}, {keszlet : csavarok-rendeles.db})
+
+      let keszrendeles : Rendeles = {id : undefined, csavar_id: id, db : rendeles.db}
+      rendelRepo.save(keszrendeles)
+      return {osszesen : rendeles.db * (await csavarRepo.findOneBy({id: id})).ar}
+    }
   }
 
   
