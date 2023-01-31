@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Render } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Render } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { AppService } from './app.service';
+import { Csavar } from './csavar.entity';
 
 @Controller()
 export class AppController {
@@ -9,9 +10,28 @@ export class AppController {
     private dataSource: DataSource,
   ) {}
 
-  @Get()
-  @Render('index')
-  index() {
-    return { message: 'Welcome to the homepage' };
+
+
+  @Get('/api/csavar')
+  listCsavar(){
+    const csavarRepo = this.dataSource.getRepository(Csavar);
+    return csavarRepo.find();
   }
+
+  @Post('/api/csavar')
+  newCsavar(@Body() csavar: Csavar) {
+    csavar.id = undefined;
+    const csavarRepo = this.dataSource.getRepository(Csavar);
+    csavarRepo.save(csavar);
+  }
+
+  @Delete('/api/csavar/:id')
+  deleteCsavar(@Param('id') id: number) {
+    const csavarRepo = this.dataSource.getRepository(Csavar);
+    csavarRepo.delete(id);
+  }
+
+  @Post('/api/csavar/:id/rendeles')
+  newRendeles
+
 }
