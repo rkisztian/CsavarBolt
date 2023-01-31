@@ -13,16 +13,32 @@ export class AppController {
 
 
   @Get('/api/csavar')
-  listCsavar(){
+  async listCsavar(){
     const csavarRepo = this.dataSource.getRepository(Csavar);
-    return csavarRepo.find();
+    const sorok = await csavarRepo.find()
+    return {Csavar : sorok}
   }
 
   @Post('/api/csavar')
   newCsavar(@Body() csavar: Csavar) {
-    csavar.id = undefined;
-    const csavarRepo = this.dataSource.getRepository(Csavar);
-    csavarRepo.save(csavar);
+    let hiba = "";
+    csavar.id = undefined
+    if(csavar.tipus.trim() == ""){
+      hiba = "A tipust megadni kötelező"
+      return hiba
+    }
+    if(csavar.hossz <= 0 || isNaN(csavar.hossz)) {
+      hiba = "A hossz megadása kötelező"
+    }
+    if(isNaN(csavar.keszlet) || csavar.keszlet < 0){
+      hiba ="A készlet megadása kötelező"
+      return hiba
+    }
+    if(csavar.ar <= 0 || isNaN(csavar.ar)){
+      hiba = "Az ár megadása kötelező"
+    }
+    const csavarRepo = this.dataSource.getRepository(Csavar)
+    csavarRepo.save(csavar)
   }
 
   @Delete('/api/csavar/:id')
