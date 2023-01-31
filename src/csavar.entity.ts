@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Rendeles } from "./rendeles.entity";
 
 
@@ -16,8 +16,11 @@ export class Csavar {
     @Column()
     keszlet: number;
 
-    @Column()
+    @Column({type: 'decimal', scale: 2})
     ar: number;
+
+    @OneToMany(() => Rendeles, (rendeles) => rendeles.csavar_id)
+    rendelesek:Rendeles[]
 
 
 }

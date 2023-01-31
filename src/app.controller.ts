@@ -31,7 +31,6 @@ export class AppController {
     csavarRepo.delete(id);
   }
 
-  @Post('/api/csavar/:id/rendeles')
-  newRendeles
+  
 
 }
